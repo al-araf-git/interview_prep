@@ -144,7 +144,7 @@ If unsure, redirect the candidate to HR for more details.
 Conclude the interview properly:
 Thank the candidate for their time.
 Inform them that the company will reach out soon with feedback.
-Inform them to wait couple of second after ending the call so that they can be directed to their feedback page. 
+Inform them to wait couple of second after the press End button to end the call so that they can be directed to their feedback page. 
 End the conversation on a polite and positive note and tell them to press End button to end the call.
 
 
