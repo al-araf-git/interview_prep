@@ -8,8 +8,8 @@ import DisplayTechIcons from './DisplayTechIcons';
 import { getFeedbackByInterviewId } from '@/lib/actions/general.action';
 
 const InterviewCard = async ({ id, userId, role, type, techstack, createdAt }: InterviewCardProps) => {
-    const feedback = userId && id 
-    ? await getFeedbackByInterviewId({interviewId: id, userId}) : null;
+    const feedback = userId && id
+        ? await getFeedbackByInterviewId({ interviewId: id, userId }) : null;
     const normalizedType = /mix/gi.test(type) ? 'Mixed' : type;
     const formattedDate = dayjs(feedback?.createdAt || createdAt || Date.now()).format('MMM D, YYYY');
     return (
@@ -31,7 +31,9 @@ const InterviewCard = async ({ id, userId, role, type, techstack, createdAt }: I
                         </div>
                         <div className="flex flex-row gap-2 items-center">
                             <Image src="/star.svg" alt="star" width={22} height={22} />
-                            <p>{feedback?.totalScore || '---'}/100</p>
+                            {/* <p>{feedback?.totalScore || '---'}/100</p> */}
+                            <p>{feedback?.totalScore ?? '---'}/100</p>
+
                         </div>
                     </div>
                     <p className="line-clamp-2 mt-5">

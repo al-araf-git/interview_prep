@@ -6,6 +6,7 @@ import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import { string, success } from "zod";
 import { id } from "zod/v4/locales";
+import { getCurrentUser } from "./auth.action";
 
 export async function getInterviewsByUserId(userId: string): Promise<Interview[] | null> {
     const interviews = await db
@@ -104,20 +105,44 @@ export async function createFeedback(params: CreateFeedbackParams) {
 
 
 
-export async function getFeedbackByInterviewId(params: GetFeedbackByInterviewIdParams): Promise<Feedback | null> {
-    const { interviewId, userId } = params;
+// export async function getFeedbackByInterviewId(params: GetFeedbackByInterviewIdParams): Promise<Feedback | null> {
+//     const { interviewId, userId } = params;
 
-    const feedback = await db
-        .collection('feedback')
-        .where('interviewId', '==', interviewId)
-        .where('userId', '==', userId)
+//     const feedback = await db
+//         .collection('feedback')
+//         .where('interviewId', '==', interviewId)
+//         .where('userId', '==', userId)
+//         .limit(1)
+//         .get();
+
+//     if(feedback.empty) return null;
+
+//     const feedbackDoc = feedback.docs[0];
+//     return {id: feedbackDoc.id, ...feedbackDoc.data()} as Feedback;
+
+
+// }
+
+export async function getFeedbackByInterviewId(
+    params: GetFeedbackByInterviewIdParams
+): Promise<Feedback | null> {
+    const { interviewId } = params;
+
+    // Get the logged-in user
+    const currentUser = await getCurrentUser();
+    if (!currentUser) return null; // not logged in
+
+    // Fetch latest feedback for this interview AND current user
+    const feedbackQuery = await db
+        .collection("feedback")
+        .where("interviewId", "==", interviewId)
+        .where("userId", "==", currentUser.id)
+        .orderBy("createdAt", "desc") // get latest first
         .limit(1)
         .get();
 
-    if(feedback.empty) return null;
+    if (feedbackQuery.empty) return null;
 
-    const feedbackDoc = feedback.docs[0];
-    return {id: feedbackDoc.id, ...feedbackDoc.data()} as Feedback;
-
-
+    const feedbackDoc = feedbackQuery.docs[0];
+    return { id: feedbackDoc.id, ...feedbackDoc.data() } as Feedback;
 }
